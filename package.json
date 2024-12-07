@@ -5,7 +5,10 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "deploy": "npm run build && gh-pages -d build/public",
+    "fetch-feed": "node scripts/fetchFeed.js",
+    "build": "npm run fetch-feed && gh-pages -d build"
   },
   "repository": {
     "type": "git",
@@ -20,6 +23,11 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "gh-pages": "^3.2.3",
+    "node-fetch": "^2.6.1"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.2.0"
   }
 }
