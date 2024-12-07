@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const FEED_URL = 'https://fscollegian.com/feed/';
-const OUTPUT_PATH = path.join(__dirname, '../build/public/feed.xml');
+const OUTPUT_PATH = path.join(__dirname, '../build/feed.xml');
 
 // Ensure the build/public directory exists
 fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true });
