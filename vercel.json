@@ -11,8 +11,8 @@
       }
     ],
     "routes": [
-      { "src": "/api/update-feed", "dest": "/api/update-feed.js" },
-      { "src": "/api/fscollegian", "dest": "/api/fscollegian.js" },
+      { "src": "/api/update-feed", "dest": "/api/update-feed" },
+      { "src": "/api/fscollegian", "dest": "/api/fscollegian" },
       { "src": "/(.*)", "dest": "/public/$1" }
     ]
   }
