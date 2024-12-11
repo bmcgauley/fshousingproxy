@@ -3,6 +3,8 @@ const request = require("request");
 const app = express();
 const fs = require("fs");
 const path = require("path");
+const { exec } = require("child_process");
+
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   next();
@@ -24,3 +26,17 @@ app.get("/robots.txt", (req, res) => {
 
 const PORT = process.env.PORT || 4050;
 app.listen(PORT, () => console.log(`listening on ${PORT}`));
+
+app.post("/update-feed", (req, res) => {
+  exec("npm run deploy", (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error executing deploy script: ${error.message}`);
+      return res.status(500).json({ message: "Failed to update feed" });
+    }
+    console.log(`Deploy output: ${stdout}`);
+    if (stderr) {
+      console.error(`Deploy stderr: ${stderr}`);
+    }
+    res.status(200).json({ message: "Feed updated successfully" });
+  });
+});
