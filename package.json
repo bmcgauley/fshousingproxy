@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
+    "start": "vercel dev",
     "deploy": "npm run build && gh-pages -d build/public",
     "fetch-feed": "node scripts/fetchFeed.js",
     "build": "npm run fetch-feed"
