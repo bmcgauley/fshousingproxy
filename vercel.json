@@ -1,9 +1,19 @@
 {
     "version": 2,
-    "public": "public",
-    "rewrites": [
-      { "source": "/update-feed", "destination": "/api/update-feed" },
-      { "source": "/fscollegian", "destination": "/api/fscollegian" }
+    "builds": [
+      {
+        "src": "api/*.js",
+        "use": "@vercel/node"
+      },
+      {
+        "src": "public/**/*",
+        "use": "@vercel/static"
+      }
+    ],
+    "routes": [
+      { "src": "/api/update-feed", "dest": "/api/update-feed.js" },
+      { "src": "/api/fscollegian", "dest": "/api/fscollegian.js" },
+      { "src": "/(.*)", "dest": "/public/$1" }
     ]
   }
   
