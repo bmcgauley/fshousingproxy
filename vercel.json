@@ -1,0 +1,9 @@
+{
+    "version": 2,
+    "public": "public",
+    "rewrites": [
+      { "source": "/update-feed", "destination": "/api/update-feed" },
+      { "source": "/fscollegian", "destination": "/api/fscollegian" }
+    ]
+  }
+  
