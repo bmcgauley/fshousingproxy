@@ -1,13 +1,14 @@
-import { exec } from "child_process";
+import fetch from "node-fetch";
+import fs from "fs";
+import path from "path";
 
 export default async (req, res) => {
   // CORS headers
-  res.setHeader("Access-Control-Allow-Origin", "*"); // Use "*" for any origin, or specify "https://fresnostatehousing.org"
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
   if (req.method === "OPTIONS") {
-    // Handle preflight CORS request
     return res.status(200).end();
   }
 
@@ -15,13 +16,22 @@ export default async (req, res) => {
     return res.status(405).json({ error: "Method Not Allowed" });
   }
 
-  exec("npm run fetch-feed", (error, stdout, stderr) => {
-    if (error) {
-      console.error(`Error executing fetch-feed: ${error.message}`);
-      return res.status(500).json({ message: "Failed to update feed" });
+  const FEED_URL = "https://fscollegian.com/feed/";
+  const OUTPUT_PATH = path.join(process.cwd(), "public/feed.xml"); // Save in the public directory
+
+  try {
+    const response = await fetch(FEED_URL);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch feed: ${response.statusText}`);
     }
-    console.log(`Feed updated: ${stdout}`);
-    if (stderr) console.error(`stderr: ${stderr}`);
+
+    const data = await response.text();
+    fs.writeFileSync(OUTPUT_PATH, data, "utf8"); // Write to feed.xml
+    console.log("Feed updated successfully");
+
     res.status(200).json({ message: "Feed updated successfully" });
-  });
+  } catch (error) {
+    console.error("Error updating feed:", error);
+    res.status(500).json({ message: error.message });
+  }
 };
