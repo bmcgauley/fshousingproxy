@@ -39,6 +39,7 @@ export default async (req, res) => {
 
     fs.writeFileSync(OUTPUT_PATH, data, "utf8");
     console.log("Feed written successfully.");
+    console.log("Feed data:", data);
 
     res.status(200).json({ message: "Feed updated successfully" });
   } catch (error) {
