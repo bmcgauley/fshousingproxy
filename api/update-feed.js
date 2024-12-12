@@ -7,7 +7,7 @@ export default async (req, res) => {
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  if (req.method === "OPTIONS") {
+  if (req.method === "OPTIONS" || req.method === "GET") {
     return res.status(200).end();
   }
 
