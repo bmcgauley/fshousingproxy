@@ -24,6 +24,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.17.1",
+    "next-server": "^9.0.5",
     "node-fetch": "^2.6.1",
     "request": "^2.88.2",
     "vercel": "^39.2.2"
