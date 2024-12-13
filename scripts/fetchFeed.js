@@ -1,25 +1,28 @@
 const fetch = require('node-fetch');
-const fs = require('fs');
-const path = require('path');
+const { put } = require('@vercel/blob');
 
 const FEED_URL = 'https://fscollegian.com/feed/';
-const OUTPUT_PATH = path.join(__dirname, '../public/feed.xml');
+const BLOB_KEY = 'feed.xml'; // Fixed filename
 
-// Ensure the public directory exists
-fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true });
+(async () => {
+  try {
+    console.log(`Fetching feed from ${FEED_URL}...`);
+    const response = await fetch(FEED_URL);
 
-fetch(FEED_URL)
-  .then(response => {
     if (!response.ok) {
       throw new Error(`Failed to fetch feed: ${response.statusText}`);
     }
-    return response.text();
-  })
-  .then(data => {
-    fs.writeFileSync(OUTPUT_PATH, data, 'utf8');
-    console.log('Feed fetched and saved to feed.xml');
-  })
-  .catch(error => {
-    console.error('Error fetching feed:', error);
+
+    const feedData = await response.text();
+
+    console.log('Storing feed in Vercel Blob...');
+    const blob = await put(BLOB_KEY, feedData, {
+      access: 'public',
+    });
+
+    console.log('Feed stored successfully:', blob.url);
+  } catch (error) {
+    console.error('Error fetching or storing feed:', error.message);
     process.exit(1);
-  });
+  }
+})();

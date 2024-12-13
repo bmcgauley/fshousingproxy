@@ -2,10 +2,13 @@ import { put } from '@vercel/blob';
 import { NextResponse } from 'next/server';
 import fetch from 'node-fetch';
 
-export async function POST(request) {
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Method Not Allowed' });
+  }
+
   try {
     // Fetch the RSS feed from fscollegian.com
-    console.log('Fetching feed from fscollegian.com...');
     const response = await fetch('https://fscollegian.com/feed/');
 
     if (!response.ok) {
@@ -19,17 +22,12 @@ export async function POST(request) {
       access: 'public', // Makes the blob publicly accessible
     });
 
-    console.log('Feed stored successfully:', blob);
-
-    return NextResponse.json({
+    return res.status(200).json({
       message: 'Feed updated successfully',
       blobUrl: blob.url,
     });
   } catch (error) {
     console.error('Error updating feed:', error.message);
-    return NextResponse.json(
-      { message: `Failed to update feed: ${error.message}` },
-      { status: 500 }
-    );
+    return res.status(500).json({ message: `Failed to update feed: ${error.message}` });
   }
 }
