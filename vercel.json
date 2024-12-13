@@ -6,7 +6,9 @@
     ],
     "routes": [
       { "src": "/api/update-feed", "dest": "/api/update-feed.js" },
+      { "src": "/api/get-feed", "dest": "/api/get-feed.js" },
       { "src": "/api/fscollegian", "dest": "/api/fscollegian.js" },
+      { "src": "/robots.txt", "dest": "/public/robots.txt" },
       { "src": "/(.*)", "dest": "/public/$1" }
     ]
   }

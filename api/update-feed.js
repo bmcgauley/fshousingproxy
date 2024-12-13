@@ -19,7 +19,7 @@ export default async function handler(req, res) {
     const feedData = await response.text();
 
     // Define the blob key
-    const BLOB_KEY = 'feed.xml'; // Ensure this is correctly formatted
+    const BLOB_KEY = 'feed.xml'; // Correctly formatted without slashes
 
     // Log the blob key
     console.log(`Storing feed with blob key: "${BLOB_KEY}"`);
