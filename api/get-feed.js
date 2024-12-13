@@ -1,28 +1,14 @@
-import { list, get } from '@vercel/blob';
+import { get } from '@vercel/blob';
 import { NextResponse } from 'next/server';
-
+import { POST } from './update-feed';
+const url = POST.blob.url
+console.log(url)
 /**
  * Handler to retrieve and serve the latest feed.xml from Vercel Blob.
  */
 export async function GET(request) {
   try {
-    console.log('Listing blobs with prefix "feed"');
-    const blobsList = await list({ prefix: 'feed' });
-
-    if (!blobsList.blobs || blobsList.blobs.length === 0) {
-      throw new Error('No feed.xml blobs found. Please upload the feed first.');
-    }
-
-    // Sort blobs by last modified date in descending order
-    const sortedBlobs = blobsList.blobs.sort(
-      (a, b) => new Date(b.modified) - new Date(a.modified)
-    );
-
-    const latestBlob = sortedBlobs[0];
-    console.log('Latest feed blob:', latestBlob.url);
-
-    // Retrieve the latest feed content
-    const feedContent = await get(latestBlob.key);
+    const feedContent = await get(url);
 
     if (!feedContent) {
       throw new Error('Failed to retrieve feed content.');

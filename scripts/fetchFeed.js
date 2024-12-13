@@ -1,6 +1,8 @@
-require('dotenv').config();
-const fetch = require('node-fetch');
-const { put } = require('@vercel/blob');
+// require('dotenv').config(); 
+import dotenv from 'dotenv';
+dotenv.config();
+import fetch from 'node-fetch';
+import { put } from '@vercel/blob';
 
 const FEED_URL = 'https://fscollegian.com/feed/';
 const BLOB_KEY = 'feed.xml';
