@@ -1,4 +1,5 @@
 import { get } from '@vercel/blob';
+import { getLatestBlob } from '../utils/blobManager';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -6,12 +7,19 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Retrieve the latest blob key
+    const latestBlobKey = getLatestBlob();
+
+    if (!latestBlobKey) {
+      throw new Error('Latest feed not found. Please run the update-feed endpoint first.');
+    }
+
     // Retrieve the stored feed from Vercel Blob
-    console.log('Retrieving feed from Vercel Blob...');
-    const feedData = await get('feed.xml');
+    console.log(`Retrieving feed from Vercel Blob with key: ${latestBlobKey}`);
+    const feedData = await get(latestBlobKey);
 
     if (!feedData) {
-      throw new Error('Feed not found. Please run the update-feed endpoint first.');
+      throw new Error('Failed to retrieve feed data.');
     }
 
     res.setHeader('Content-Type', 'application/rss+xml');
