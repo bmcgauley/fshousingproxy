@@ -1,14 +1,14 @@
-import { put } from '@vercel/blob';
+import { put, list, get } from '@vercel/blob';
 import fetch from 'node-fetch';
-import { setLatestBlob } from '../utils/blobManager';
+import { NextResponse } from 'next/server';
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method Not Allowed' });
-  }
-
+/**
+ * Handler to upload the latest feed.xml to Vercel Blob.
+ * Generates a unique URL with a hash suffix.
+ */
+export async function POST(request) {
   try {
-    console.log('Fetching feed from fscollegian.com...');
+    console.log('Fetching feed from https://fscollegian.com/feed/...');
     const response = await fetch('https://fscollegian.com/feed/');
 
     if (!response.ok) {
@@ -18,22 +18,22 @@ export default async function handler(req, res) {
     const feedData = await response.text();
     const BLOB_KEY = 'feed.xml'; // Fixed blob key
 
-    console.log(`Storing feed with blob key: "${BLOB_KEY}"`);
+    console.log(`Storing feed in Vercel Blob with key: "${BLOB_KEY}"`);
     const blob = await put(BLOB_KEY, feedData, {
       access: 'public', // Makes the blob publicly accessible
     });
 
     console.log('Feed stored successfully:', blob.url);
 
-    // Store the latest blob key
-    setLatestBlob(blob.key);
-
-    return res.status(200).json({
+    return NextResponse.json({
       message: 'Feed updated successfully',
       blobUrl: blob.url,
     });
   } catch (error) {
     console.error('Error updating feed:', error.message);
-    return res.status(500).json({ message: `Failed to update feed: ${error.message}` });
+    return NextResponse.json(
+      { message: `Failed to update feed: ${error.message}` },
+      { status: 500 }
+    );
   }
 }
