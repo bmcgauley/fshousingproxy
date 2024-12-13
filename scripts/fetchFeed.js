@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 const { put } = require('@vercel/blob');
 
 const FEED_URL = 'https://fscollegian.com/feed/';
-const BLOB_KEY = 'feed.xml'; // Fixed filename
+const BLOB_KEY = 'https://sxrfwylpjxx14fwt.public.blob.vercel-storage.com'; // Fixed filename
 
 (async () => {
   try {

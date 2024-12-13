@@ -18,7 +18,7 @@ export default async function handler(req, res) {
     const feedData = await response.text();
 
     // Store the fetched feed in Vercel Blob with a fixed filename
-    const blob = await put('feed.xml', feedData, {
+    const blob = await put('https://sxrfwylpjxx14fwt.public.blob.vercel-storage.com', feedData, {
       access: 'public', // Makes the blob publicly accessible
     });
 

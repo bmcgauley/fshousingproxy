@@ -7,7 +7,7 @@ export default async function handler(req, res) {
 
   try {
     // Retrieve the stored feed from Vercel Blob
-    const feedData = await get('feed.xml');
+    const feedData = await get('https://sxrfwylpjxx14fwt.public.blob.vercel-storage.com');
 
     if (!feedData) {
       throw new Error('Feed not found. Please run the update-feed endpoint first.');
