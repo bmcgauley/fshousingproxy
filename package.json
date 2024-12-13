@@ -6,9 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "vercel dev",
-    "deploy": "npm run build && gh-pages -d build/public",
+    "deploy": "npm run build && vercel --prod",
     "fetch-feed": "node scripts/fetchFeed.js",
-    "build": "npm run fetch-feed"
+    "build": "npm run fetch-feed",
+    "prod": "C:/Users/bmcgauley/AppData/Roaming/npm/vercel.ps1 --prod"
   },
   "repository": {
     "type": "git",
@@ -16,15 +17,15 @@
   },
   "author": "",
   "license": "ISC",
-  "bugs": {
-  },
+  "bugs": {},
   "homepage": "",
   "dependencies": {
+    "@vercel/blob": "^0.27.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "node-fetch": "^2.6.1",
     "request": "^2.88.2",
-    "vercel": "^39.2.0"
+    "vercel": "^39.2.2"
   },
   "devDependencies": {
     "gh-pages": "^6.2.0"

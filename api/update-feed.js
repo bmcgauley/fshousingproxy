@@ -1,49 +1,35 @@
-import fetch from "node-fetch";
-import fs from "fs";
-import path from "path";
+import { put } from '@vercel/blob';
+import { NextResponse } from 'next/server';
+import fetch from 'node-fetch';
 
-export default async (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS, GET");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-  if (req.method === "OPTIONS" || req.method === "GET") {
-    return res.status(200).end();
-  }
-
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method Not Allowed" });
-  }
-
-  const FEED_URL = "https://fscollegian.com/feed/";
-  const OUTPUT_PATH = path.join("/tmp", "feed.xml"); // Use temporary directory
-
-
+export async function POST(request) {
   try {
-    console.log("Fetching feed from:", FEED_URL);
-    const response = await fetch(FEED_URL);
+    // Fetch the RSS feed from fscollegian.com
+    console.log('Fetching feed from fscollegian.com...');
+    const response = await fetch('https://fscollegian.com/feed/');
+
     if (!response.ok) {
-      console.error(`Failed to fetch feed: ${response.statusText}`);
       throw new Error(`Failed to fetch feed: ${response.statusText}`);
     }
 
-    const data = await response.text();
-    console.log("Feed fetched successfully. Writing to:", OUTPUT_PATH);
+    const feedData = await response.text();
 
-    // Check if the directory exists before writing
-    const dir = path.dirname(OUTPUT_PATH);
-    if (!fs.existsSync(dir)) {
-      console.log("Directory does not exist, creating:", dir);
-      fs.mkdirSync(dir, { recursive: true });
-    }
+    // Store the fetched feed in Vercel Blob with a fixed filename
+    const blob = await put('feed.xml', feedData, {
+      access: 'public', // Makes the blob publicly accessible
+    });
 
-    fs.writeFileSync(OUTPUT_PATH, data, "utf8");
-    console.log("Feed written successfully.");
-    console.log("Feed data:", data);
+    console.log('Feed stored successfully:', blob);
 
-    res.status(200).json({ message: "Feed updated successfully" });
+    return NextResponse.json({
+      message: 'Feed updated successfully',
+      blobUrl: blob.url,
+    });
   } catch (error) {
-    console.error("Error updating feed:", error.message, error.stack);
-    res.status(500).json({ message: "Failed to update feed: " + error.message });
+    console.error('Error updating feed:', error.message);
+    return NextResponse.json(
+      { message: `Failed to update feed: ${error.message}` },
+      { status: 500 }
+    );
   }
-};
+}

@@ -5,7 +5,7 @@ const path = require('path');
 const FEED_URL = 'https://fscollegian.com/feed/';
 const OUTPUT_PATH = path.join(__dirname, '../public/feed.xml');
 
-// Ensure the build/public directory exists
+// Ensure the public directory exists
 fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true });
 
 fetch(FEED_URL)
@@ -22,4 +22,4 @@ fetch(FEED_URL)
   .catch(error => {
     console.error('Error fetching feed:', error);
     process.exit(1);
-  }); 
+  });
