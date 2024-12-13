@@ -1,7 +1,6 @@
 import { put } from '@vercel/blob';
-import { NextResponse } from 'next/server';
 import fetch from 'node-fetch';
-
+const bloblink = 'https://sxrfwylpjxx14fwt.public.blob.vercel-storage.com'
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method Not Allowed' });
@@ -18,7 +17,7 @@ export default async function handler(req, res) {
     const feedData = await response.text();
 
     // Store the fetched feed in Vercel Blob with a fixed filename
-    const blob = await put('https://sxrfwylpjxx14fwt.public.blob.vercel-storage.com', feedData, {
+    const blob = await put(bloblink, feedData, {
       access: 'public', // Makes the blob publicly accessible
     });
 

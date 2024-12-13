@@ -1,5 +1,5 @@
 import { get } from '@vercel/blob';
-
+const bloblink = 'https://sxrfwylpjxx14fwt.public.blob.vercel-storage.com'
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ message: 'Method Not Allowed' });
@@ -7,7 +7,7 @@ export default async function handler(req, res) {
 
   try {
     // Retrieve the stored feed from Vercel Blob
-    const feedData = await get('https://sxrfwylpjxx14fwt.public.blob.vercel-storage.com');
+    const feedData = await get(bloblink);
 
     if (!feedData) {
       throw new Error('Feed not found. Please run the update-feed endpoint first.');
