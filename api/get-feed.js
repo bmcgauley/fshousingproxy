@@ -1,23 +1,24 @@
-import { get } from '@vercel/blob';
+import { db } from '../utils/firebase';
 import { NextResponse } from 'next/server';
-import { POST } from './update-feed';
-const url = POST.blob.url
-console.log(url)
+import { collection, getDocs } from "firebase/firestore";
+
 /**
  * Handler to retrieve and serve the latest feed.xml from Vercel Blob.
  */
 export async function GET(request) {
   try {
-    const feedContent = await get(url);
+    const feedCollection = collection(db, 'feeds');
+    const feedSnapshot = await getDocs(feedCollection);
+    const feedContent = feedSnapshot.docs.map(doc => doc.data());
 
-    if (!feedContent) {
+    if (!feedContent.length) {
       throw new Error('Failed to retrieve feed content.');
     }
 
-    return new NextResponse(feedContent, {
+    return new NextResponse(JSON.stringify(feedContent), {
       status: 200,
       headers: {
-        'Content-Type': 'application/rss+xml',
+        'Content-Type': 'application/json',
       },
     });
   } catch (error) {

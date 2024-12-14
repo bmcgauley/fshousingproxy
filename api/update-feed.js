@@ -1,16 +1,16 @@
-import { put, list, get } from '@vercel/blob';
 import fetch from 'node-fetch';
 import { NextResponse } from 'next/server';
-
-
+import { db } from '../utils/firebase';
+import { collection, addDoc, Timestamp } from "firebase/firestore";
 
 /**
- * Handler to upload the latest feed.xml to Vercel Blob.
+ * Handler to upload the latest feed.xml to Firestore.
  * Generates a unique URL with a hash suffix.
  */
 export async function POST(request) {
   try {
     console.log('Fetching feed from https://fscollegian.com/feed/...');
+
     const response = await fetch('https://fscollegian.com/feed/');
 
     if (!response.ok) {
@@ -18,18 +18,20 @@ export async function POST(request) {
     }
 
     const feedData = await response.text();
-    const BLOB_KEY = 'feed.xml'; // Fixed blob key
+    const feedJson = convertXmlToJson(feedData); // Implement this function if needed
+    const FEEDS_COLLECTION = 'feeds';
 
-    console.log(`Storing feed in Vercel Blob with key: "${BLOB_KEY}"`);
-    const blob = await put(BLOB_KEY, feedData, {
-      access: 'public', // Makes the blob publicly accessible
+    console.log(`Storing feed in Firestore...`);
+    const blob = await addDoc(collection(db, FEEDS_COLLECTION), {
+      content: feedJson,
+      timestamp: Timestamp.fromDate(new Date())
     });
 
-    console.log('Feed stored successfully:', blob.url);
+    console.log('Feed stored successfully in Firestore:', blob.id);
 
     return NextResponse.json({
       message: 'Feed updated successfully',
-      blobUrl: blob.url,
+      blobId: blob.id,
     });
   } catch (error) {
     console.error('Error updating feed:', error.message);
@@ -38,4 +40,12 @@ export async function POST(request) {
       { status: 500 }
     );
   }
+}
+
+export const blobID = blob.id;
+
+// Optionally, implement XML to JSON conversion
+function convertXmlToJson(xml) {
+  // Implement XML parsing logic or use a library like xml2js
+  return xml; // Placeholder: store XML as string if preferred
 }

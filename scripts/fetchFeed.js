@@ -1,11 +1,12 @@
-// require('dotenv').config(); 
 import dotenv from 'dotenv';
-dotenv.config();
 import fetch from 'node-fetch';
-import { put } from '@vercel/blob';
+import { db } from '../utils/firebase.js';
+import { collection, addDoc, Timestamp } from "firebase/firestore";
+
+dotenv.config();
 
 const FEED_URL = 'https://fscollegian.com/feed/';
-const BLOB_KEY = 'feed.xml';
+const FEEDS_COLLECTION = 'feeds';
 
 (async () => {
   try {
@@ -17,15 +18,23 @@ const BLOB_KEY = 'feed.xml';
     }
 
     const feedData = await response.text();
+    const feedJson = convertXmlToJson(feedData); // Implement this function if needed
 
-    console.log('Storing feed in Vercel Blob...');
-    const blob = await put(BLOB_KEY, feedData, {
-      access: 'public',
+    console.log('Storing feed in Firestore...');
+    await addDoc(collection(db, FEEDS_COLLECTION), {
+      content: feedJson,
+      timestamp: Timestamp.fromDate(new Date())
     });
 
-    console.log('Feed stored successfully:', blob.url);
+    console.log('Feed stored successfully in Firestore.');
   } catch (error) {
     console.error('Error fetching or storing feed:', error.message);
     process.exit(1);
   }
 })();
+
+// Optionally, implement XML to JSON conversion
+function convertXmlToJson(xml) {
+  // Implement XML parsing logic or use a library like xml2js
+  return xml; // Placeholder: store XML as string if preferred
+}
