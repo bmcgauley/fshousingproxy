@@ -1,22 +1,29 @@
-const express = require("express");
-const request = require("request");
+import express from 'express';
+import axios from 'axios';
+import fs from 'fs';
+import path from 'path';
+import { exec } from 'child_process';
+import { getLatestBlob, setLatestBlob } from './utils/blobManager.js';
+
 const app = express();
-const fs = require("fs");
-const path = require("path");
-const { exec } = require("child_process");
+
+app.use(express.json());
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   next();
 });
-app.get("/api/fscollegian", (req, res) => {
-  request({ url: "https://fscollegian.com/feed/" }, (error, response, body) => {
-    if (error || response.statusCode !== 200) {
-      return res.status(500).json({ type: "error", message: error.message });
-    }
+
+app.use(express.static('public'));
+
+app.get("/api/fscollegian", async (req, res) => {
+  try {
+    const response = await axios.get("https://fscollegian.com/feed/");
     res.set("Content-Type", "application/rss+xml");
-    res.send(Buffer.from(body));
-  });
+    res.send(response.data);
+  } catch (error) {
+    res.status(500).json({ type: "error", message: error.message });
+  }
 });
 
 app.get("/robots.txt", (req, res) => {
@@ -24,8 +31,8 @@ app.get("/robots.txt", (req, res) => {
   res.send(fs.readFileSync(path.join(__dirname, "robots.txt"), "utf8"));
 });
 
-const PORT = process.env.PORT || 4050;
-app.listen(PORT, () => console.log(`listening on ${PORT}`));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 app.post("/update-feed", (req, res) => {
   exec("npm run deploy", (error, stdout, stderr) => {

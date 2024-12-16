@@ -2,9 +2,7 @@
     "version": 2,
     "builds": [
       { "src": "api/*.js", "use": "@vercel/node" },
-      { "src": "public/*", "use": "@vercel/static" },
-      { "src": "scripts/*.js", "use": "@vercel/node" },
-      { "src": "utils/*.js", "use": "@vercel/node" }
+      { "src": "public/*", "use": "@vercel/static" }
     ],
     "routes": [
       { "src": "/api/update-feed", "dest": "/api/update-feed.js" },

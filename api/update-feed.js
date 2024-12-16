@@ -1,11 +1,10 @@
 import fetch from 'node-fetch';
+import { db } from '../utils/firebaseAdmin.js';
 import { NextResponse } from 'next/server';
-import { db } from '../utils/firebase';
-import { collection, addDoc, Timestamp } from "firebase/firestore";
+import { convertXmlToJson } from '../utils/xmlConverter.js';
 
 /**
- * Handler to upload the latest feed.xml to Firestore.
- * Generates a unique URL with a hash suffix.
+ * Handler to upload the latest feed to Firestore.
  */
 export async function POST(request) {
   try {
@@ -18,20 +17,20 @@ export async function POST(request) {
     }
 
     const feedData = await response.text();
-    const feedJson = convertXmlToJson(feedData); // Implement this function if needed
+    const feedJson = await convertXmlToJson(feedData);
     const FEEDS_COLLECTION = 'feeds';
 
     console.log(`Storing feed in Firestore...`);
-    const blob = await addDoc(collection(db, FEEDS_COLLECTION), {
+    const docRef = await db.collection(FEEDS_COLLECTION).add({
       content: feedJson,
-      timestamp: Timestamp.fromDate(new Date())
+      timestamp: new Date()
     });
 
-    console.log('Feed stored successfully in Firestore:', blob.id);
+    console.log('Feed stored successfully in Firestore:', docRef.id);
 
     return NextResponse.json({
       message: 'Feed updated successfully',
-      blobId: blob.id,
+      docId: docRef.id,
     });
   } catch (error) {
     console.error('Error updating feed:', error.message);
@@ -40,12 +39,4 @@ export async function POST(request) {
       { status: 500 }
     );
   }
-}
-
-export const blobID = blob.id;
-
-// Optionally, implement XML to JSON conversion
-function convertXmlToJson(xml) {
-  // Implement XML parsing logic or use a library like xml2js
-  return xml; // Placeholder: store XML as string if preferred
 }

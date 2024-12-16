@@ -21,15 +21,16 @@
   "bugs": {},
   "homepage": "",
   "dependencies": {
-    "@vercel/blob": "^0.27.0",
+    "axios": "^1.7.9",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.17.1",
-    "firebase": "^9.23.0",
+    "firebase": "^9.0.0",
+    "firebase-admin": "^11.11.1",
     "next-server": "^9.0.5",
-    "node-fetch": "^2.6.1",
-    "request": "^2.88.2",
-    "vercel": "^39.2.2"
+    "node-fetch": "^3.3.2",
+    "vercel": "^39.2.2",
+    "xml2js": "^0.4.23"
   },
   "devDependencies": {
     "gh-pages": "^6.2.0"

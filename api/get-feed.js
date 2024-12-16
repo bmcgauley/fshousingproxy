@@ -1,14 +1,12 @@
-import { db } from '../utils/firebase';
+import { db } from '../utils/firebaseAdmin.js';
 import { NextResponse } from 'next/server';
-import { collection, getDocs } from "firebase/firestore";
 
 /**
- * Handler to retrieve and serve the latest feed.xml from Vercel Blob.
+ * Handler to retrieve and serve the latest feed from Firestore.
  */
 export async function GET(request) {
   try {
-    const feedCollection = collection(db, 'feeds');
-    const feedSnapshot = await getDocs(feedCollection);
+    const feedSnapshot = await db.collection('feeds').get();
     const feedContent = feedSnapshot.docs.map(doc => doc.data());
 
     if (!feedContent.length) {
