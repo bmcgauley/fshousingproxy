@@ -1,4 +1,4 @@
-import { db } from '../utils/firebaseAdmin.js';
+import { db } from '../utils/firebase.js';
 import { NextResponse } from 'next/server';
 
 /**

@@ -1,7 +1,8 @@
 import dotenv from 'dotenv';
 import fetch from 'node-fetch';
-import { db } from '../utils/firebaseAdmin.js';
+import { db } from '../utils/firebase.js';
 import { convertXmlToJson } from '../utils/xmlConverter.js';
+import { collection, addDoc } from 'firebase/firestore';
 
 dotenv.config();
 
@@ -21,7 +22,8 @@ const FEEDS_COLLECTION = 'feeds';
     const feedJson = await convertXmlToJson(feedData);
 
     console.log('Storing feed in Firestore...');
-    await db.collection(FEEDS_COLLECTION).add({
+    const feedsCol = collection(db, FEEDS_COLLECTION);
+    await addDoc(feedsCol, {
       content: feedJson,
       timestamp: new Date()
     });

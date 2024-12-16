@@ -1,7 +1,8 @@
 import fetch from 'node-fetch';
-import { db } from '../utils/firebaseAdmin.js';
+import { db } from '../utils/firebase.js';
 import { NextResponse } from 'next/server';
 import { convertXmlToJson } from '../utils/xmlConverter.js';
+import { collection, addDoc } from 'firebase/firestore';
 
 /**
  * Handler to upload the latest feed to Firestore.
@@ -21,7 +22,8 @@ export async function POST(request) {
     const FEEDS_COLLECTION = 'feeds';
 
     console.log(`Storing feed in Firestore...`);
-    const docRef = await db.collection(FEEDS_COLLECTION).add({
+    const feedsCol = collection(db, FEEDS_COLLECTION);
+    const docRef = await addDoc(feedsCol, {
       content: feedJson,
       timestamp: new Date()
     });
