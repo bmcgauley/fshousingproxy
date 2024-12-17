@@ -1,15 +1,12 @@
-import { db } from '../utils/firebase.js';
+import { db } from '../../utils/firebase.js';
+import { NextResponse } from 'next/server';
 import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
 
 /**
- * Serverless Function to fetch the latest feed from Firestore.
+ * GET /api/get-feed
+ * Fetches the latest feed from Firestore.
  */
-export default async function handler(req, res) {
-  if (req.method !== 'GET') {
-    res.status(405).json({ message: 'Method Not Allowed' });
-    return;
-  }
-
+export async function GET(request) {
   try {
     console.log('Fetching latest feed from Firestore...');
     const feedsCol = collection(db, 'feeds');
@@ -17,18 +14,20 @@ export default async function handler(req, res) {
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot.empty) {
-      res.status(200).json({ message: 'No feed data available.' });
-      return;
+      return NextResponse.json({ message: 'No feed data available.' });
     }
 
     const latestFeed = querySnapshot.docs[0].data();
 
-    res.status(200).json({
+    return NextResponse.json({
       message: 'Feed retrieved successfully',
       data: latestFeed,
     });
   } catch (error) {
     console.error('Error fetching feed:', error.message);
-    res.status(500).json({ message: `Failed to fetch feed: ${error.message}` });
+    return NextResponse.json(
+      { message: `Failed to fetch feed: ${error.message}` },
+      { status: 500 }
+    );
   }
 }
