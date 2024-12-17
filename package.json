@@ -6,12 +6,11 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "next start",
+    "start": "vercel dev",
     "deploy": "npm run build && vercel --prod",
     "fetch-feed": "node scripts/fetchFeed.js",
-    "build": "next build && npm run fetch-feed",
-    "prod": "C:/Users/bmcgauley/AppData/Roaming/npm/vercel.ps1 --prod",
-    "dev": "next dev"
+    "build": "npm run fetch-feed",
+    "prod": "C:/Users/bmcgauley/AppData/Roaming/npm/vercel.ps1 --prod"
   },
   "repository": {
     "type": "git",
