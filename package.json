@@ -28,6 +28,7 @@
     "firebase": "^9.0.0",
     "firebase-admin": "^11.11.1",
     "next-server": "^9.0.5",
+    "nextjs": "^0.0.3",
     "node-fetch": "^3.3.2",
     "vercel": "^39.2.2",
     "xml2js": "^0.4.23"
