@@ -1,28 +1,31 @@
 import { db } from '../utils/firebase.js';
 import { NextResponse } from 'next/server';
+import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
 
 /**
- * Handler to retrieve and serve the latest feed from Firestore.
+ * Handler to fetch the latest feed from Firestore.
  */
 export async function GET(request) {
   try {
-    const feedSnapshot = await db.collection('feeds').get();
-    const feedContent = feedSnapshot.docs.map(doc => doc.data());
+    console.log('Fetching latest feed from Firestore...');
+    const feedsCol = collection(db, 'feeds');
+    const q = query(feedsCol, orderBy('timestamp', 'desc'), limit(1));
+    const querySnapshot = await getDocs(q);
 
-    if (!feedContent.length) {
-      throw new Error('Failed to retrieve feed content.');
+    if (querySnapshot.empty) {
+      return NextResponse.json({ message: 'No feed data available.' });
     }
 
-    return new NextResponse(JSON.stringify(feedContent), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-      },
+    const latestFeed = querySnapshot.docs[0].data();
+
+    return NextResponse.json({
+      message: 'Feed retrieved successfully',
+      data: latestFeed,
     });
   } catch (error) {
-    console.error('Error retrieving feed:', error.message);
+    console.error('Error fetching feed:', error.message);
     return NextResponse.json(
-      { message: `Failed to retrieve feed: ${error.message}` },
+      { message: `Failed to fetch feed: ${error.message}` },
       { status: 500 }
     );
   }
