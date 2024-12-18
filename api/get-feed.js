@@ -1,10 +1,14 @@
 import { db } from '../utils/firebase.js';
 import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
+import setCorsHeaders from '../utils/cors-helper.js';
 
 /**
  * Serverless Function to fetch the latest feed from Firestore.
  */
 export default async function handler(req, res) {
+  // Handle CORS
+  if (setCorsHeaders(req, res)) return;
+  
   if (req.method !== 'GET') {
     res.status(405).json({ message: 'Method Not Allowed' });
     return;
