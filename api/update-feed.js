@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   // Handle CORS
   if (setCorsHeaders(req, res)) return;
 
-  if (req.method !== 'GET') {
+  if (req.method !== 'GET' && req.method !== 'POST') {
     res.status(405).json({ message: 'Method Not Allowed' });
     return;
   }
