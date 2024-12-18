@@ -1,7 +1,7 @@
 import { db } from '../utils/firebase.js';
-import { convertXmlToJson } from '../utils/xmlConverter';
+import { convertXmlToJson } from '../utils/xmlConverter.js';
 import { collection, addDoc } from 'firebase/firestore';
-import setCorsHeaders from '../utils/cors-helper';
+import setCorsHeaders from '../utils/cors-helper.js';
 
 /**
  * Serverless Function to upload the latest feed to Firestore.
@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   // Handle CORS
   if (setCorsHeaders(req, res)) return;
 
-  if (req.method !== 'POST') {
+  if (req.method !== 'GET') {
     res.status(405).json({ message: 'Method Not Allowed' });
     return;
   }
