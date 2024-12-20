@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import fetch from 'node-fetch';
 import { db } from '../utils/firebase.js';
 import { convertXmlToJson } from '../utils/xmlConverter.js';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, getDocs, writeBatch } from 'firebase/firestore';
 
 dotenv.config();
 
@@ -23,12 +23,24 @@ const FEEDS_COLLECTION = 'feeds';
 
     console.log('Storing feed in Firestore...');
     const feedsCol = collection(db, FEEDS_COLLECTION);
-    await addDoc(feedsCol, {
+    const newFeedDoc = await addDoc(feedsCol, {
       content: feedJson,
       timestamp: new Date()
     });
 
-    console.log('Feed stored successfully in Firestore.');
+    console.log('Feed stored successfully in Firestore:', newFeedDoc.id);
+
+    // Delete all other feed documents except the newly added one
+    const allFeedsSnapshot = await getDocs(feedsCol);
+    const batch = writeBatch(db);
+    allFeedsSnapshot.forEach(doc => {
+      if (doc.id !== newFeedDoc.id) {
+        batch.delete(doc.ref);
+      }
+    });
+
+    await batch.commit();
+    console.log('Old feeds deleted, only the latest feed is retained.');
   } catch (error) {
     console.error('Error fetching or storing feed:', error.message);
     process.exit(1);

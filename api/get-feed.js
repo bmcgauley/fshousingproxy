@@ -1,5 +1,5 @@
 import { db } from '../utils/firebase.js';
-import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, writeBatch } from 'firebase/firestore';
 import setCorsHeaders from '../utils/cors-helper.js';
 
 /**
@@ -17,7 +17,7 @@ export default async function handler(req, res) {
   try {
     console.log('Fetching latest feed from Firestore...');
     const feedsCol = collection(db, 'feeds');
-    const q = query(feedsCol, orderBy('timestamp', 'desc'), limit(1));
+    const q = query(feedsCol, orderBy('timestamp', 'desc'));
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot.empty) {
@@ -26,6 +26,16 @@ export default async function handler(req, res) {
     }
 
     const latestFeed = querySnapshot.docs[0].data();
+
+    // Ensure only the latest feed exists by deleting the rest
+    if (querySnapshot.size > 1) {
+      const batch = writeBatch(db);
+      querySnapshot.docs.slice(1).forEach(doc => {
+        batch.delete(doc.ref);
+      });
+      await batch.commit();
+      console.log('Old feeds deleted, only the latest feed is retained.');
+    }
 
     res.status(200).json({
       message: 'Feed retrieved successfully',
